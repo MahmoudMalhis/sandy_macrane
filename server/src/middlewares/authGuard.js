@@ -1,5 +1,5 @@
 import { verify } from "jsonwebtoken";
-import db from "../db/knex";
+import db from "../db/knex.js";
 
 const authGuard = async (req, res, next) => {
   try {

@@ -1,13 +1,20 @@
-import { BrowserRouter } from "react-router-dom";
+// src/App.jsx
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./components/layout/Layout";
+import Home from "./pages/Home";
 import "./App.css";
-import Header from "./components/layout/Header";
-import Footer from "./components/layout/Footer/Footer";
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Header />
-      <Footer />
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/gallery" element={<div>المعرض</div>} />
+          <Route path="/about" element={<div>من نحن</div>} />
+          <Route path="/testimonials" element={<div>آراء العملاء</div>} />
+        </Routes>
+      </Layout>
     </BrowserRouter>
   );
 }

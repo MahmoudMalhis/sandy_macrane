@@ -1,7 +1,22 @@
-export default function ApplyNow() {
+import useAppStore from "../store/useAppStore";
+import Button from "./common/Button";
+
+// src/components/ApplyNow.jsx
+export default function ApplyNow({
+  album = null,
+  variant = "primary",
+  className = "",
+  children = "اطلب الآن",
+}) {
+  const { openOrderForm } = useAppStore();
+
+  const handleClick = () => {
+    openOrderForm(album);
+  };
+
   return (
-    <button className="bg-purple text-white px-6 py-2 rounded-full font-bold hover:bg-purple-hover transition duration-300 cursor-pointer">
-      أطلب الآن
-    </button>
+    <Button onClick={handleClick} variant={variant} className={className}>
+      {children}
+    </Button>
   );
 }

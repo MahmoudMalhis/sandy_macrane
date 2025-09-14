@@ -5,7 +5,7 @@ export const getSettings = async (rec, res) => {
     const [rows] = await db.execute("SELECT * FROM settings");
     const settings = {};
     rows.forEach((row) => {
-      settings[row.settings_key];
+      settings[row.settings_key] = row.setting_value;
     });
     res.json(settings);
   } catch (error) {
@@ -24,7 +24,7 @@ export const updateSettings = async (req, res) => {
       );
     }
 
-    res.json({ message: "Settings update successfully" });
+    res.json({ message: "Settings updated successfully" });
   } catch (error) {
     res.status(500).json({ error: "Database error" });
   }
