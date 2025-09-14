@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@theme {
+    --color-purple: #8b5f8c;
+    --color-purple-hover: #8b5fc4;
+}
