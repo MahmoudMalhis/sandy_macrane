@@ -264,4 +264,33 @@ class SettingsService {
   }
 }
 
+// إضافة هذه السطور في نهاية ملف server/src/module/settings/service.js
+
+// Export named functions
+export const get = SettingsService.get.bind(SettingsService);
+export const set = SettingsService.set.bind(SettingsService);
+export const getMultiple = SettingsService.getMultiple.bind(SettingsService);
+export const getAll = SettingsService.getAll.bind(SettingsService);
+export const setMultiple = SettingsService.setMultiple.bind(SettingsService);
+export const getPublic = SettingsService.getPublic.bind(SettingsService);
+export const getWhatsAppOwner =
+  SettingsService.getWhatsAppOwner.bind(SettingsService);
+export const getSocialLinks =
+  SettingsService.getSocialLinks.bind(SettingsService);
+export const getSiteMeta = SettingsService.getSiteMeta.bind(SettingsService);
+export const getHomeSlider =
+  SettingsService.getHomeSlider.bind(SettingsService);
+export const updateWhatsAppOwner =
+  SettingsService.updateWhatsAppOwner.bind(SettingsService);
+export const updateSocialLinks =
+  SettingsService.updateSocialLinks.bind(SettingsService);
+export const updateSiteMeta =
+  SettingsService.updateSiteMeta.bind(SettingsService);
+export const updateHomeSlider =
+  SettingsService.updateHomeSlider.bind(SettingsService);
+
+// Export delete with alternative name
+export const deleteSetting = SettingsService.delete.bind(SettingsService);
+export { SettingsService as delete };
+
 export default SettingsService;

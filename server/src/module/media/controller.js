@@ -2,7 +2,7 @@ import {
   addMultipleToAlbum,
   getByAlbum,
   update as _update,
-  delete as _delete,
+  deleteMedia as _delete, // تم تغيير هذا السطر
   reorder as _reorder,
 } from "./service.js";
 import { getById } from "../albums/service.js";
@@ -228,5 +228,15 @@ class MediaController {
     }
   }
 }
+
+// Export named functions
+export const uploadToAlbum = MediaController.uploadToAlbum;
+export const getAlbumMedia = MediaController.getAlbumMedia;
+export const update = MediaController.update;
+export const reorder = MediaController.reorder;
+
+// Export delete with alternative name
+export { MediaController as delete };
+export const deleteMedia = MediaController.delete;
 
 export default MediaController;

@@ -1,3 +1,4 @@
+// client/src/pages/admin/Login.jsx - مُصحح
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -9,7 +10,7 @@ import useAuthStore from "../../api/useAuthStore";
 export default function AdminLogin() {
   const { isAuthenticated, login, loading: authLoading } = useAuthStore();
   const [needsSetup, setNeedsSetup] = useState(null);
-  const [checkingSetup, setCheckingSetup] = useState(true); // state محلي
+  const [checkingSetup, setCheckingSetup] = useState(true);
   const location = useLocation();
   const {
     register,
@@ -21,11 +22,17 @@ export default function AdminLogin() {
     const checkSetup = async () => {
       try {
         const response = await authAPI.checkSetupStatus();
-        setNeedsSetup(response.needsSetup);
+        console.log("Setup check response:", response); // للتشخيص
+
+        // تعديل للتعامل مع structure الصحيح
+        const needsSetup = response.data?.needsSetup ?? false;
+        setNeedsSetup(needsSetup);
       } catch (error) {
         console.error("Error checking setup:", error);
+        // في حالة الخطأ، نفترض أن Setup غير مطلوب (قد يكون مشكلة شبكة)
+        setNeedsSetup(false);
       } finally {
-        setCheckingSetup(false); // استخدام المحلي
+        setCheckingSetup(false);
       }
     };
 
@@ -33,10 +40,12 @@ export default function AdminLogin() {
   }, []);
 
   if (checkingSetup) {
-    // استخدام المحلي
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        جاري التحميل...
+      <div className="min-h-screen flex items-center justify-center bg-beige">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple mx-auto mb-4"></div>
+          <div>جاري التحميل...</div>
+        </div>
       </div>
     );
   }
@@ -126,7 +135,7 @@ export default function AdminLogin() {
 
           <Button
             type="submit"
-            loading={authLoading} // استخدام loading من Store
+            loading={authLoading}
             className="w-full"
             disabled={authLoading}
           >
@@ -135,7 +144,7 @@ export default function AdminLogin() {
         </form>
 
         <div className="mt-6 text-center text-sm text-purple hover:text-purple-hover hover:underline">
-          <Link to="/admin/setup"> إنشاء حساب جديد؟</Link>
+          <Link to="/admin/setup">إنشاء حساب جديد؟</Link>
         </div>
       </div>
     </div>

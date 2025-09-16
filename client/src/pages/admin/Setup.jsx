@@ -1,5 +1,6 @@
+// client/src/pages/admin/Setup.jsx - مُصحح
 import { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { authAPI } from "../../api/auth";
@@ -9,6 +10,7 @@ export default function AdminSetup() {
   const [needsSetup, setNeedsSetup] = useState(null);
   const [loading, setLoading] = useState(true);
   const [setupLoading, setSetupLoading] = useState(false);
+  const [setupComplete, setSetupComplete] = useState(false);
   const {
     register,
     handleSubmit,
@@ -22,9 +24,15 @@ export default function AdminSetup() {
     const checkSetupStatus = async () => {
       try {
         const response = await authAPI.checkSetupStatus();
-        setNeedsSetup(response.needsSetup);
+        console.log("Setup status response:", response); // للتشخيص
+
+        // تعديل للتعامل مع structure الصحيح
+        const needsSetup = response.data?.needsSetup ?? true;
+        setNeedsSetup(needsSetup);
       } catch (error) {
         console.error("Error checking setup status:", error);
+        // في حالة الخطأ، نفترض أن Setup مطلوب
+        setNeedsSetup(true);
       } finally {
         setLoading(false);
       }
@@ -36,9 +44,17 @@ export default function AdminSetup() {
   const onSubmit = async (data) => {
     setSetupLoading(true);
     try {
-      await authAPI.setupFirstAdmin(data);
+      const response = await authAPI.setupFirstAdmin({
+        email: data.email,
+        password: data.password,
+      });
+
+      console.log("Setup response:", response); // للتشخيص
+
       toast.success("تم إنشاء الحساب! تحقق من إيميلك لتفعيل الحساب");
+      setSetupComplete(true);
     } catch (error) {
+      console.error("Setup error:", error);
       toast.error(error.message || "حدث خطأ في إنشاء الحساب");
     } finally {
       setSetupLoading(false);
@@ -48,13 +64,49 @@ export default function AdminSetup() {
   if (loading) {
     return (
       <div className="min-h-screen bg-beige flex items-center justify-center">
-        <div>جاري التحميل...</div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple mx-auto mb-4"></div>
+          <div>جاري التحميل...</div>
+        </div>
       </div>
     );
   }
 
-  if (!needsSetup) {
+  // إذا لم نعد نحتاج Setup، انتقل للـ Login
+  if (needsSetup === false) {
     return <Navigate to="/admin/login" replace />;
+  }
+
+  // إذا تم إكمال Setup بنجاح
+  if (setupComplete) {
+    return (
+      <div
+        className="min-h-screen bg-beige flex items-center justify-center p-4"
+        dir="rtl"
+      >
+        <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md text-center">
+          <img
+            src="/logo.jpg"
+            alt="Sandy Macrame"
+            className="h-20 w-20 rounded-full mx-auto mb-4"
+          />
+
+          <div className="text-green-500 text-6xl mb-4">✓</div>
+          <h2 className="text-xl font-bold text-green-600 mb-4">
+            تم إنشاء الحساب بنجاح!
+          </h2>
+          <p className="text-gray-600 mb-6">
+            تم إرسال رسالة تفعيل لإيميلك. يرجى التحقق من إيميلك وتفعيل الحساب.
+          </p>
+          <Link
+            to="/admin/login"
+            className="bg-purple text-white px-6 py-3 rounded-lg hover:bg-purple-hover transition-colors inline-block"
+          >
+            الذهاب لتسجيل الدخول
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -165,6 +217,15 @@ export default function AdminSetup() {
             {setupLoading ? "جاري الإنشاء..." : "إنشاء الحساب"}
           </Button>
         </form>
+
+        <div className="mt-6 text-center">
+          <Link
+            to="/admin/login"
+            className="text-sm text-purple hover:text-purple-hover hover:underline"
+          >
+            لديك حساب بالفعل؟ تسجيل الدخول
+          </Link>
+        </div>
       </div>
     </div>
   );

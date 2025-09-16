@@ -1,5 +1,6 @@
+// client/src/api/useAuthStore.js - مُصحح
 import { create } from "zustand";
-import { authAPI } from "../api/auth";
+import { authAPI } from "./auth";
 
 const useAuthStore = create((set, get) => ({
   // State
@@ -13,7 +14,10 @@ const useAuthStore = create((set, get) => ({
     set({ loading: true });
     try {
       const response = await authAPI.login(credentials);
-      const { user, token } = response;
+
+      // تعديل للتعامل مع structure الصحيح للـ response
+      const { data } = response;
+      const { user, token } = data;
 
       localStorage.setItem("authToken", token);
       set({
@@ -26,7 +30,10 @@ const useAuthStore = create((set, get) => ({
       return { success: true };
     } catch (error) {
       set({ loading: false });
-      return { success: false, error: error.message };
+      return {
+        success: false,
+        error: error.message || "فشل في تسجيل الدخول",
+      };
     }
   },
 
@@ -44,9 +51,11 @@ const useAuthStore = create((set, get) => ({
     if (!token) return;
 
     try {
-      const user = await authAPI.getProfile();
+      const response = await authAPI.getProfile();
+      const user = response.data; // تعديل للتعامل مع structure الصحيح
       set({ user, isAuthenticated: true });
     } catch (error) {
+      console.error("Check auth failed:", error);
       get().logout();
     }
   },

@@ -1,18 +1,29 @@
+// client/src/pages/admin/Dashboard.jsx - مُصحح
 import { useState, useEffect } from "react";
-import { Image, MessageSquare, Users, Eye } from "lucide-react";
+import { Image, MessageSquare, Users, Eye, Settings } from "lucide-react";
 import { adminAPI } from "../../api/auth";
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const data = await adminAPI.getStats();
-        setStats(data);
+        const response = await adminAPI.getStats();
+        // تعديل للتعامل مع structure الصحيح
+        setStats(response.data || response);
       } catch (error) {
         console.error("Error fetching stats:", error);
+        setError("فشل في تحميل الإحصائيات");
+        // إعداد stats افتراضية في حالة الخطأ
+        setStats({
+          albums: { total: 0, published: 0 },
+          reviews: { total: 0, pending: 0 },
+          inquiries: { total: 0, new: 0 },
+          views: { total: 0 },
+        });
       } finally {
         setLoading(false);
       }
@@ -22,7 +33,26 @@ export default function Dashboard() {
   }, []);
 
   if (loading) {
-    return <div className="p-8 text-center">جاري التحميل...</div>;
+    return (
+      <div className="p-8 text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple mx-auto mb-4"></div>
+        جاري التحميل...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-8 text-center">
+        <div className="text-red-500 mb-4">{error}</div>
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-purple text-white px-4 py-2 rounded-lg hover:bg-purple-hover"
+        >
+          إعادة المحاولة
+        </button>
+      </div>
+    );
   }
 
   const statCards = [

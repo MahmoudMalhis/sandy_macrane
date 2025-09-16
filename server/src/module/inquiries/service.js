@@ -246,4 +246,18 @@ class InquiriesService {
   }
 }
 
+// Export named functions
+export const create = InquiriesService.create.bind(InquiriesService);
+export const getAll = InquiriesService.getAll.bind(InquiriesService);
+export const getById = InquiriesService.getById.bind(InquiriesService);
+export const updateStatus =
+  InquiriesService.updateStatus.bind(InquiriesService);
+export const getStats = InquiriesService.getStats.bind(InquiriesService);
+export const generateWhatsAppLink =
+  InquiriesService.generateWhatsAppLink.bind(InquiriesService);
+
+// Export delete with alternative name
+export const deleteInquiry = InquiriesService.delete.bind(InquiriesService);
+export { InquiriesService as delete };
+
 export default InquiriesService;

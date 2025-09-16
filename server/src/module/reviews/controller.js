@@ -4,7 +4,7 @@ import {
   getById as _getById,
   update as _update,
   changeStatus as _changeStatus,
-  delete as _delete,
+  deleteReview as _delete, // تم تغيير هذا السطر
   getFeatured as _getFeatured,
   getStats as _getStats,
 } from "./service.js";
@@ -298,5 +298,19 @@ class ReviewsController {
     }
   }
 }
+
+// Export named functions
+export const create = ReviewsController.create;
+export const getAll = ReviewsController.getAll;
+export const getAllAdmin = ReviewsController.getAllAdmin;
+export const getById = ReviewsController.getById;
+export const update = ReviewsController.update;
+export const changeStatus = ReviewsController.changeStatus; // إضافة هذا السطر
+export const getFeatured = ReviewsController.getFeatured;
+export const getStats = ReviewsController.getStats;
+
+// Export delete with alternative name
+export { ReviewsController as delete };
+export const deleteReview = ReviewsController.delete;
 
 export default ReviewsController;

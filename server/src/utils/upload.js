@@ -2,6 +2,12 @@ import multer, { diskStorage } from "multer";
 import { join, extname } from "path";
 import { existsSync, mkdirSync, unlinkSync } from "fs";
 import { v4 as uuidv4 } from "uuid";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+// إصلاح __dirname للعمل مع ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Ensure uploads directory exists
 const uploadsDir = join(__dirname, "../../uploads");
@@ -12,10 +18,7 @@ if (!existsSync(uploadsDir)) {
 // Configure multer for local storage
 const storage = diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = join(
-      uploadsDir,
-      getUploadSubfolder(file.fieldname)
-    );
+    const uploadPath = join(uploadsDir, getUploadSubfolder(file.fieldname));
 
     // Create subfolder if it doesn't exist
     if (!existsSync(uploadPath)) {
@@ -25,9 +28,7 @@ const storage = diskStorage({
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
-    const uniqueName = `${uuidv4()}-${Date.now()}${extname(
-      file.originalname
-    )}`;
+    const uniqueName = `${uuidv4()}-${Date.now()}${extname(file.originalname)}`;
     cb(null, uniqueName);
   },
 });
@@ -36,6 +37,7 @@ const storage = diskStorage({
 const getUploadSubfolder = (fieldname) => {
   switch (fieldname) {
     case "album_images":
+    case "media_files":
     case "cover_image":
       return "albums";
     case "review_image":
@@ -96,8 +98,10 @@ const processUploadedFiles = (req, files) => {
   if (!files || files.length === 0) return [];
 
   return files.map((file) => {
-    const relativePath = join(getUploadSubfolder(file.fieldname), file.filename)
-      .replace(/\\/g, "/"); // Ensure forward slashes for URLs
+    const relativePath = join(
+      getUploadSubfolder(file.fieldname),
+      file.filename
+    ).replace(/\\/g, "/"); // Ensure forward slashes for URLs
 
     return {
       filename: file.filename,
@@ -110,7 +114,8 @@ const processUploadedFiles = (req, files) => {
   });
 };
 
-export default {
+// تصحيح exports
+export {
   upload,
   deleteFile,
   getFileUrl,

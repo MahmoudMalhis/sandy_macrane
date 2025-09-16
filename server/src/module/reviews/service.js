@@ -251,4 +251,20 @@ class ReviewsService {
   }
 }
 
+// إضافة هذه السطور في نهاية ملف server/src/module/reviews/service.js
+
+// Export named functions
+export const create = ReviewsService.create.bind(ReviewsService);
+export const getAll = ReviewsService.getAll.bind(ReviewsService);
+export const getById = ReviewsService.getById.bind(ReviewsService);
+export const update = ReviewsService.update.bind(ReviewsService);
+export const changeStatus = ReviewsService.changeStatus.bind(ReviewsService);
+export const getFeatured = ReviewsService.getFeatured.bind(ReviewsService);
+export const getStats = ReviewsService.getStats.bind(ReviewsService);
+export const getByAlbum = ReviewsService.getByAlbum.bind(ReviewsService);
+
+// Export delete with alternative name
+export const deleteReview = ReviewsService.delete.bind(ReviewsService);
+export { ReviewsService as delete };
+
 export default ReviewsService;

@@ -338,4 +338,17 @@ class AlbumsService {
   }
 }
 
+// Export named functions instead of class
+export const getAll = AlbumsService.getAll.bind(AlbumsService);
+export const getBySlug = AlbumsService.getBySlug.bind(AlbumsService);
+export const getById = AlbumsService.getById.bind(AlbumsService);
+export const create = AlbumsService.create.bind(AlbumsService);
+export const update = AlbumsService.update.bind(AlbumsService);
+export const getFeatured = AlbumsService.getFeatured.bind(AlbumsService);
+export const getStats = AlbumsService.getStats.bind(AlbumsService);
+export { AlbumsService as delete };
+
+// Export delete function separately to avoid naming conflict
+export const deleteAlbum = AlbumsService.delete.bind(AlbumsService);
+
 export default AlbumsService;

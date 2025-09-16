@@ -6,7 +6,7 @@ import {
   getByKey,
   set,
   setMultiple,
-  delete as deleteSetting,
+  deleteSetting, // تم تغيير هذا السطر
   updateWhatsApp,
   updateSocialLinks,
   updateSiteMeta,
@@ -116,7 +116,7 @@ router.get("/admin", getAll);
 router.get("/admin/:key", getByKey);
 router.put("/admin/:key", settingValidation, validate, set);
 router.put("/admin", setMultiple);
-router.delete("/admin/:key", deleteSetting);
+router.delete("/admin/:key", deleteSetting); // تم تغيير هذا السطر
 
 // Specific setting routes
 router.put(

@@ -137,6 +137,42 @@ class AuthService {
       throw error;
     }
   }
+
+  static async changePassword(userId, currentPassword, newPassword) {
+    try {
+      // جلب المستخدم
+      const user = await db("admin_users").where("id", userId).first();
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      // التحقق من كلمة المرور الحالية
+      const isCurrentPasswordValid = await compare(
+        currentPassword,
+        user.password_hash
+      );
+      if (!isCurrentPasswordValid) {
+        throw new Error("Invalid current password");
+      }
+
+      // hash كلمة المرور الجديدة
+      const newPasswordHash = await hash(newPassword, 10);
+
+      // تحديث كلمة المرور
+      await db("admin_users").where("id", userId).update({
+        password_hash: newPasswordHash,
+        updated_at: fn.now(),
+      });
+
+      return {
+        success: true,
+        message: "Password changed successfully",
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default AuthService;

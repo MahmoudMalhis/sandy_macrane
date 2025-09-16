@@ -1,13 +1,13 @@
-// src/api/config.js - تحديث
+// client/src/api/config.js - مُصحح
 import axios from "axios";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+  import.meta.env.VITE_API_URL || "http://localhost:4000/api"; // تغيير من 3000 إلى 4000
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    "Content-Type": "application/json", // تصحيح
+    "Content-Type": "application/json",
   },
 });
 
@@ -28,7 +28,7 @@ apiClient.interceptors.response.use(
     // معالجة انتهاء الصلاحية
     if (error.response?.status === 401) {
       localStorage.removeItem("authToken");
-      // إعادة توجيه للوجة تسجيل الدخول
+      window.location.href = "/admin/login";
     }
 
     return Promise.reject(error.response?.data || error.message);

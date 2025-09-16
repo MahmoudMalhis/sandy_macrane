@@ -4,7 +4,7 @@ import {
   getById as _getById,
   create as _create,
   update as _update,
-  delete as _delete,
+  deleteAlbum as _delete, // تم تغيير هذا السطر
   getFeatured as _getFeatured,
   getStats as _getStats,
 } from "./service.js";
@@ -279,5 +279,19 @@ class AlbumsController {
     }
   }
 }
+
+// Export named functions
+export const getAll = AlbumsController.getAll;
+export const getAllAdmin = AlbumsController.getAllAdmin;
+export const getBySlug = AlbumsController.getBySlug;
+export const getById = AlbumsController.getById;
+export const create = AlbumsController.create;
+export const update = AlbumsController.update;
+export const getFeatured = AlbumsController.getFeatured;
+export const getStats = AlbumsController.getStats;
+
+// Export delete function with alternative name
+export { AlbumsController as delete };
+export const deleteAlbum = AlbumsController.delete;
 
 export default AlbumsController;

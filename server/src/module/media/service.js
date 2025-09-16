@@ -1,6 +1,12 @@
 import db, { fn, transaction } from "../../db/knex.js";
 import { deleteFile } from "../../utils/upload.js";
 import { join } from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+// إصلاح __dirname للعمل مع ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 class MediaService {
   // Add media to album
@@ -228,5 +234,18 @@ class MediaService {
     }
   }
 }
+
+// Export named functions
+export const addToAlbum = MediaService.addToAlbum.bind(MediaService);
+export const addMultipleToAlbum =
+  MediaService.addMultipleToAlbum.bind(MediaService);
+export const getById = MediaService.getById.bind(MediaService);
+export const getByAlbum = MediaService.getByAlbum.bind(MediaService);
+export const update = MediaService.update.bind(MediaService);
+export const reorder = MediaService.reorder.bind(MediaService);
+
+// Export delete with alternative name to avoid keyword conflict
+export const deleteMedia = MediaService.delete.bind(MediaService);
+export { MediaService as delete };
 
 export default MediaService;

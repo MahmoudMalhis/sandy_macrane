@@ -4,7 +4,7 @@ import {
   get,
   set as _set,
   setMultiple as _setMultiple,
-  delete as _delete,
+  deleteSetting as _delete, // تم تغيير هذا السطر
   updateWhatsAppOwner,
   updateSocialLinks as _updateSocialLinks,
   updateSiteMeta as _updateSiteMeta,
@@ -315,5 +315,20 @@ class SettingsController {
     }
   }
 }
+
+// Export named functions
+export const getPublic = SettingsController.getPublic;
+export const getAll = SettingsController.getAll;
+export const getByKey = SettingsController.getByKey;
+export const set = SettingsController.set;
+export const setMultiple = SettingsController.setMultiple;
+export const deleteSetting = SettingsController.delete; // هذا السطر مهم
+export const updateWhatsApp = SettingsController.updateWhatsApp;
+export const updateSocialLinks = SettingsController.updateSocialLinks;
+export const updateSiteMeta = SettingsController.updateSiteMeta;
+export const updateHomeSlider = SettingsController.updateHomeSlider;
+
+// Export delete with alternative name
+export { SettingsController as delete };
 
 export default SettingsController;

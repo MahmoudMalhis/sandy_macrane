@@ -3,7 +3,7 @@ import {
   getAll as _getAll,
   getById as _getById,
   updateStatus as _updateStatus,
-  delete as _delete,
+  deleteInquiry as _delete, // إصلاح الاستيراد
   getStats as _getStats,
   generateWhatsAppLink as _generateWhatsAppLink,
 } from "./service.js";
@@ -241,5 +241,17 @@ class InquiriesController {
     }
   }
 }
+
+// Export named functions
+export const create = InquiriesController.create;
+export const getAll = InquiriesController.getAll;
+export const getById = InquiriesController.getById;
+export const updateStatus = InquiriesController.updateStatus;
+export const getStats = InquiriesController.getStats;
+export const generateWhatsAppLink = InquiriesController.generateWhatsAppLink;
+
+// Export delete with alternative name
+export { InquiriesController as delete };
+export const deleteInquiry = InquiriesController.delete;
 
 export default InquiriesController;

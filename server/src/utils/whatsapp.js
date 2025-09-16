@@ -37,7 +37,8 @@ const createInquiryWhatsAppLink = async (inquiry, album = null) => {
   return generateWhatsAppLink(whatsappOwner, message);
 };
 
-export default {
+// تصحيح exports
+export {
   generateWhatsAppMessage,
   generateWhatsAppLink,
   createInquiryWhatsAppLink,
