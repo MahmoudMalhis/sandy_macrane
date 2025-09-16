@@ -1,6 +1,6 @@
 import { useState } from "react";
-import useAppStore from "../../store/useAppStore";
 import Button from "../components/common/Button";
+import useAppStore from "../store/useAppStore";
 
 export default function OrderForm() {
   const { isOrderFormOpen, selectedAlbum, closeOrderForm } = useAppStore();

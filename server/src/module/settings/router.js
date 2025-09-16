@@ -1,8 +1,19 @@
 import { Router } from "express";
 import { body } from "express-validator";
-import { getPublic, getAll, getByKey, set, setMultiple, delete as deleteSetting, updateWhatsApp, updateSocialLinks, updateSiteMeta, updateHomeSlider } from "./controller";
-import { authGuard } from "../../middlewares/authGuard";
-import { validate } from "../../middlewares/validate";
+import {
+  getPublic,
+  getAll,
+  getByKey,
+  set,
+  setMultiple,
+  delete as deleteSetting,
+  updateWhatsApp,
+  updateSocialLinks,
+  updateSiteMeta,
+  updateHomeSlider,
+} from "./controller.js";
+import { authGuard } from "../../middlewares/authGuard.js";
+import { validate } from "../../middlewares/validate.js";
 
 const router = Router();
 
@@ -120,12 +131,7 @@ router.put(
   validate,
   updateSocialLinks
 );
-router.put(
-  "/admin/site/meta",
-  siteMetaValidation,
-  validate,
-  updateSiteMeta
-);
+router.put("/admin/site/meta", siteMetaValidation, validate, updateSiteMeta);
 router.put(
   "/admin/home/slider",
   homeSliderValidation,

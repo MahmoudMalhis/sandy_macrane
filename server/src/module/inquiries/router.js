@@ -1,9 +1,17 @@
 import { Router } from "express";
 import { body, query } from "express-validator";
-import { create, getAll, getStats, getById, updateStatus, generateWhatsAppLink, delete as deleteInquiry } from "./controller";
-import { authGuard } from "../../middlewares/authGuard";
-import { validate } from "../../middlewares/validate";
-import { formLimiter } from "../../middlewares/rateLimiter";
+import {
+  create,
+  getAll,
+  getStats,
+  getById,
+  updateStatus,
+  generateWhatsAppLink,
+  delete as deleteInquiry,
+} from "./controller.js";
+import { authGuard } from "../../middlewares/authGuard.js";
+import { validate } from "../../middlewares/validate.js";
+import { formLimiter } from "../../middlewares/rateLimiter.js";
 
 const router = Router();
 
@@ -72,13 +80,7 @@ const queryValidation = [
 ];
 
 // Public routes
-router.post(
-  "/",
-  formLimiter,
-  createInquiryValidation,
-  validate,
-  create
-);
+router.post("/", formLimiter, createInquiryValidation, validate, create);
 
 // Admin routes
 router.use("/admin", authGuard);
@@ -86,12 +88,7 @@ router.use("/admin", authGuard);
 router.get("/admin", queryValidation, validate, getAll);
 router.get("/admin/stats", getStats);
 router.get("/admin/:id", getById);
-router.put(
-  "/admin/:id/status",
-  updateStatusValidation,
-  validate,
-  updateStatus
-);
+router.put("/admin/:id/status", updateStatusValidation, validate, updateStatus);
 router.get("/admin/:id/whatsapp", generateWhatsAppLink);
 router.delete("/admin/:id", deleteInquiry);
 

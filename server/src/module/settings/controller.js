@@ -1,5 +1,16 @@
-import { getPublic as _getPublic, getAll as _getAll, get, set as _set, setMultiple as _setMultiple, delete as _delete, updateWhatsAppOwner, updateSocialLinks as _updateSocialLinks, updateSiteMeta as _updateSiteMeta, updateHomeSlider as _updateHomeSlider } from "./service";
-import { error as _error, info } from "../../utils/logger";
+import {
+  getPublic as _getPublic,
+  getAll as _getAll,
+  get,
+  set as _set,
+  setMultiple as _setMultiple,
+  delete as _delete,
+  updateWhatsAppOwner,
+  updateSocialLinks as _updateSocialLinks,
+  updateSiteMeta as _updateSiteMeta,
+  updateHomeSlider as _updateHomeSlider,
+} from "./service.js";
+import { error as _error, info } from "../../utils/logger.js";
 
 class SettingsController {
   // Get public settings (public)

@@ -1,4 +1,4 @@
-import db, { fn } from "../../db/knex";
+import db, { fn } from "../../db/knex.js";
 
 class ReviewsService {
   // Create new review

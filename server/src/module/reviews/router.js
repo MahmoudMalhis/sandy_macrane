@@ -1,10 +1,20 @@
 import { Router } from "express";
 import { body, query } from "express-validator";
-import { getAll, getFeatured, create, getAllAdmin, getStats, getById, update, changeStatus, delete as deleteReview } from "./controller";
-import { authGuard } from "../../middlewares/authGuard";
-import { validate } from "../../middlewares/validate";
-import { formLimiter } from "../../middlewares/rateLimiter";
-import { upload } from "../../utils/upload";
+import {
+  getAll,
+  getFeatured,
+  create,
+  getAllAdmin,
+  getStats,
+  getById,
+  update,
+  changeStatus,
+  delete as deleteReview,
+} from "./controller.js";
+import { authGuard } from "../../middlewares/authGuard.js";
+import { validate } from "../../middlewares/validate.js";
+import { formLimiter } from "../../middlewares/rateLimiter.js";
+import { upload } from "../../utils/upload.js";
 
 const router = Router();
 
@@ -102,18 +112,8 @@ router.use("/admin", authGuard);
 router.get("/admin", queryValidation, validate, getAllAdmin);
 router.get("/admin/stats", getStats);
 router.get("/admin/:id", getById);
-router.put(
-  "/admin/:id",
-  updateReviewValidation,
-  validate,
-  update
-);
-router.put(
-  "/admin/:id/status",
-  statusValidation,
-  validate,
-  changeStatus
-);
+router.put("/admin/:id", updateReviewValidation, validate, update);
+router.put("/admin/:id/status", statusValidation, validate, changeStatus);
 router.delete("/admin/:id", deleteReview);
 
 export default router;

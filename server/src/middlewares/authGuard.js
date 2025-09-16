@@ -1,5 +1,7 @@
-import { verify } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import db from "../db/knex.js";
+
+const { verify } = jwt;
 
 const authGuard = async (req, res, next) => {
   try {
@@ -60,4 +62,4 @@ const ownerOnly = (req, res, next) => {
   next();
 };
 
-export default { authGuard, ownerOnly };
+export { authGuard, ownerOnly };

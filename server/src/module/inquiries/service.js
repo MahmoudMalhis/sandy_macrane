@@ -1,5 +1,5 @@
-import db, { fn } from "../../db/knex";
-import { createInquiryWhatsAppLink } from "../../utils/whatsapp";
+import db, { fn } from "../../db/knex.js";
+import { createInquiryWhatsAppLink } from "../../utils/whatsapp.js";
 
 class InquiriesService {
   // Create new inquiry

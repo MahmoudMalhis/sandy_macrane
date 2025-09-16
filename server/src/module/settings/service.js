@@ -1,4 +1,4 @@
-import db, { fn } from "../../db/knex";
+import db, { fn } from "../../db/knex.js";
 
 class SettingsService {
   // Get setting by key

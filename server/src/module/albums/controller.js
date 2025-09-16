@@ -1,5 +1,14 @@
-import { getAll as _getAll, getBySlug as _getBySlug, getById as _getById, create as _create, update as _update, delete as _delete, getFeatured as _getFeatured, getStats as _getStats } from "./service";
-import { error as _error, info } from "../../utils/logger";
+import {
+  getAll as _getAll,
+  getBySlug as _getBySlug,
+  getById as _getById,
+  create as _create,
+  update as _update,
+  delete as _delete,
+  getFeatured as _getFeatured,
+  getStats as _getStats,
+} from "./service.js";
+import { error as _error, info } from "../../utils/logger.js";
 
 class AlbumsController {
   // Get all albums (public)

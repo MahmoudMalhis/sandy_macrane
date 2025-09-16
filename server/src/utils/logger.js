@@ -1,7 +1,13 @@
+// server/src/utils/logger.js
 import { existsSync, mkdirSync, appendFile } from "fs";
 import { join } from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
-// Ensure logs directory exists
+// إصلاح __dirname في ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const logsDir = join(__dirname, "../../logs");
 if (!existsSync(logsDir)) {
   mkdirSync(logsDir, { recursive: true });
@@ -17,10 +23,8 @@ class Logger {
       ...meta,
     };
 
-    // Console log
     console.log(`[${timestamp}] ${level.toUpperCase()}: ${message}`, meta);
 
-    // File log (only in production)
     if (process.env.NODE_ENV === "production") {
       this.writeToFile(level, logEntry);
     }
@@ -59,4 +63,6 @@ class Logger {
   }
 }
 
+// Named exports بدلاً من default
+export const { info, warn, error, debug } = Logger;
 export default Logger;

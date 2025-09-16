@@ -15,12 +15,12 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import { rateLimiter } from "./middlewares/rateLimiter.js";
 
 // Routes (نضيفهم تدريجياً)
-// import authRoutes from './modules/auth/routes.js';
-// import albumsRoutes from './modules/albums/routes.js';
-// import mediaRoutes from './modules/media/routes.js';
-// import reviewsRoutes from './modules/reviews/routes.js';
-// import inquiriesRoutes from './modules/inquiries/routes.js';
-// import settingsRoutes from './modules/settings/routes.js';
+import authRoutes from "./module/auth/router.js";
+import albumsRoutes from "./module/albums/router.js";
+import mediaRoutes from "./module/media/router.js";
+import reviewsRoutes from "./module/reviews/router.js";
+import inquiriesRoutes from "./module/inquiries/router.js";
+import settingsRoutes from "./module/settings/router.js";
 
 const app = express();
 
@@ -72,12 +72,12 @@ app.get("/", (req, res) => {
 });
 
 // API Routes (معلقة حتى ننشئ الملفات)
-// app.use('/api/auth', authRoutes);
-// app.use('/api/albums', albumsRoutes);
-// app.use('/api/media', mediaRoutes);
-// app.use('/api/reviews', reviewsRoutes);
-// app.use('/api/inquiries', inquiriesRoutes);
-// app.use('/api/settings', settingsRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/albums", albumsRoutes);
+app.use("/api/media", mediaRoutes);
+app.use("/api/reviews", reviewsRoutes);
+app.use("/api/inquiries", inquiriesRoutes);
+app.use("/api/settings", settingsRoutes);
 
 // 404 handler
 app.use("*", (req, res) => {

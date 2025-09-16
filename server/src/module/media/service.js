@@ -1,5 +1,5 @@
-import db, { fn, transaction } from "../../db/knex";
-import { deleteFile } from "../../utils/upload";
+import db, { fn, transaction } from "../../db/knex.js";
+import { deleteFile } from "../../utils/upload.js";
 import { join } from "path";
 
 class MediaService {

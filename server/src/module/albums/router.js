@@ -1,8 +1,18 @@
 import { Router } from "express";
 import { body, query } from "express-validator";
-import { getAll, getFeatured, getBySlug, getAllAdmin, getStats, getById, create, update, delete as deleteAlbum } from "./controller";
-import { authGuard } from "../../middlewares/authGuard";
-import { validate } from "../../middlewares/validate";
+import {
+  getAll,
+  getFeatured,
+  getBySlug,
+  getAllAdmin,
+  getStats,
+  getById,
+  create,
+  update,
+  delete as deleteAlbum,
+} from "./controller.js";
+import { authGuard } from "../../middlewares/authGuard.js";
+import { validate } from "../../middlewares/validate.js";
 
 const router = Router();
 

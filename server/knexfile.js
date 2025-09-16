@@ -13,7 +13,7 @@ export default {
       charset: "utf8mb4",
     },
     migrations: {
-      directory: "./src/db/migration",
+      directory: "./src/db/migrations",
       tableName: "knex_migrations",
     },
     seeds: {
@@ -29,7 +29,7 @@ export default {
     client: "mysql2",
     connection: process.env.DATABASE_URL,
     migrations: {
-      directory: "./src/db/migration",
+      directory: "./src/db/migrations",
       tableName: "knex_migrations",
     },
     seeds: {
@@ -45,7 +45,7 @@ export default {
     client: "mysql2",
     connection: process.env.DATABASE_URL,
     migrations: {
-      directory: "./src/db/migration",
+      directory: "./src/db/migrations",
       tableName: "knex_migrations",
     },
     seeds: {

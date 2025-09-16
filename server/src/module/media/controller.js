@@ -1,7 +1,13 @@
-import { addMultipleToAlbum, getByAlbum, update as _update, delete as _delete, reorder as _reorder } from "./service";
-import { getById } from "../albums/service";
-import { processUploadedFiles } from "../../utils/upload";
-import { info, error as _error } from "../../utils/logger";
+import {
+  addMultipleToAlbum,
+  getByAlbum,
+  update as _update,
+  delete as _delete,
+  reorder as _reorder,
+} from "./service.js";
+import { getById } from "../albums/service.js";
+import { processUploadedFiles } from "../../utils/upload.js";
+import { info, error as _error } from "../../utils/logger.js";
 
 class MediaController {
   // Upload media to album (admin)
@@ -28,10 +34,7 @@ class MediaController {
         alt: req.body.alt || file.originalname,
       }));
 
-      const media = await addMultipleToAlbum(
-        parseInt(albumId),
-        mediaData
-      );
+      const media = await addMultipleToAlbum(parseInt(albumId), mediaData);
 
       info("Media uploaded to album", {
         albumId: parseInt(albumId),

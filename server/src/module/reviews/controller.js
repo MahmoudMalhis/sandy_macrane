@@ -1,6 +1,15 @@
-import { create as _create, getAll as _getAll, getById as _getById, update as _update, changeStatus as _changeStatus, delete as _delete, getFeatured as _getFeatured, getStats as _getStats } from "./service";
-import { processUploadedFiles } from "../../utils/upload";
-import { info, error as _error } from "../../utils/logger";
+import {
+  create as _create,
+  getAll as _getAll,
+  getById as _getById,
+  update as _update,
+  changeStatus as _changeStatus,
+  delete as _delete,
+  getFeatured as _getFeatured,
+  getStats as _getStats,
+} from "./service.js";
+import { processUploadedFiles } from "../../utils/upload.js";
+import { info, error as _error } from "../../utils/logger.js";
 
 class ReviewsController {
   // Create new review (public)

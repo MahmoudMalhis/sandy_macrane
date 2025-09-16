@@ -1,5 +1,13 @@
-import { create as _create, getAll as _getAll, getById as _getById, updateStatus as _updateStatus, delete as _delete, getStats as _getStats, generateWhatsAppLink as _generateWhatsAppLink } from "./service";
-import { info, error as _error } from "../../utils/logger";
+import {
+  create as _create,
+  getAll as _getAll,
+  getById as _getById,
+  updateStatus as _updateStatus,
+  delete as _delete,
+  getStats as _getStats,
+  generateWhatsAppLink as _generateWhatsAppLink,
+} from "./service.js";
+import { info, error as _error } from "../../utils/logger.js";
 
 class InquiriesController {
   // Create new inquiry (public)
@@ -111,11 +119,7 @@ class InquiriesController {
       const { id } = req.params;
       const { status, notes } = req.body;
 
-      const inquiry = await _updateStatus(
-        parseInt(id),
-        status,
-        notes
-      );
+      const inquiry = await _updateStatus(parseInt(id), status, notes);
 
       info("Inquiry status updated", {
         inquiryId: parseInt(id),
@@ -209,9 +213,7 @@ class InquiriesController {
   static async generateWhatsAppLink(req, res) {
     try {
       const { id } = req.params;
-      const whatsappLink = await _generateWhatsAppLink(
-        parseInt(id)
-      );
+      const whatsappLink = await _generateWhatsAppLink(parseInt(id));
 
       res.json({
         success: true,

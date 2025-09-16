@@ -1,9 +1,15 @@
 import { Router } from "express";
 import { body } from "express-validator";
-import { uploadToAlbum, getAlbumMedia, reorder, update, delete as deleteMedia } from "./controller";
-import { authGuard } from "../../middlewares/authGuard";
-import { validate } from "../../middlewares/validate";
-import { upload } from "../../utils/upload";
+import {
+  uploadToAlbum,
+  getAlbumMedia,
+  reorder,
+  update,
+  delete as deleteMedia,
+} from "./controller.js";
+import { authGuard } from "../../middlewares/authGuard.js";
+import { validate } from "../../middlewares/validate.js";
+import { upload } from "../../utils/upload.js";
 
 const router = Router();
 
@@ -41,18 +47,9 @@ const reorderValidation = [
 router.use(authGuard);
 
 // Album media routes
-router.post(
-  "/album/:albumId",
-  upload.array("media_files", 10),
-  uploadToAlbum
-);
+router.post("/album/:albumId", upload.array("media_files", 10), uploadToAlbum);
 router.get("/album/:albumId", getAlbumMedia);
-router.post(
-  "/album/:albumId/reorder",
-  reorderValidation,
-  validate,
-  reorder
-);
+router.post("/album/:albumId/reorder", reorderValidation, validate, reorder);
 
 // Individual media routes
 router.put("/:id", mediaUpdateValidation, validate, update);
