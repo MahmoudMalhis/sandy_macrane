@@ -15,7 +15,7 @@ import useAuthStore from "../../api/useAuthStore";
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user, logout } = useAuthStore();
+  const { logout } = useAuthStore();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -79,9 +79,6 @@ export default function AdminLayout() {
         </nav>
 
         <div className="absolute bottom-4 right-4 left-4">
-          <div className={`mb-4 ${sidebarOpen ? "block" : "hidden"} md:block`}>
-            <p className="text-sm text-gray-600">مرحباً، {user?.email}</p>
-          </div>
           <button
             onClick={handleLogout}
             className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"

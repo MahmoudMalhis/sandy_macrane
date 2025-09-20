@@ -11,25 +11,34 @@ export default function AdminLogin() {
   const { isAuthenticated, login, loading: authLoading } = useAuthStore();
   const [needsSetup, setNeedsSetup] = useState(null);
   const [checkingSetup, setCheckingSetup] = useState(true);
+  const [showResendEmail, setShowResendEmail] = useState(false);
+  const [isResending, setIsResending] = useState(false);
   const location = useLocation();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm();
+
+  useEffect(() => {
+    // عرض رسالة من صفحة التفعيل إذا وجدت
+    if (location.state?.message) {
+      toast.success(location.state.message);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const checkSetup = async () => {
       try {
         const response = await authAPI.checkSetupStatus();
-        console.log("Setup check response:", response); // للتشخيص
+        console.log("Setup check response:", response);
 
-        // تعديل للتعامل مع structure الصحيح
         const needsSetup = response.data?.needsSetup ?? false;
         setNeedsSetup(needsSetup);
       } catch (error) {
         console.error("Error checking setup:", error);
-        // في حالة الخطأ، نفترض أن Setup غير مطلوب (قد يكون مشكلة شبكة)
         setNeedsSetup(false);
       } finally {
         setCheckingSetup(false);
@@ -54,7 +63,6 @@ export default function AdminLogin() {
     return <Navigate to="/admin/setup" replace />;
   }
 
-  // Redirect if already authenticated
   const from = location.state?.from?.pathname || "/admin";
   if (isAuthenticated) {
     return <Navigate to={from} replace />;
@@ -66,7 +74,31 @@ export default function AdminLogin() {
     if (result.success) {
       toast.success("تم تسجيل الدخول بنجاح");
     } else {
-      toast.error(result.error || "فشل تسجيل الدخول");
+      if (result.error?.includes("verify your email")) {
+        toast.error("يرجى تفعيل بريدك الإلكتروني قبل تسجيل الدخول");
+        setShowResendEmail(true);
+      } else {
+        toast.error(result.error || "فشل تسجيل الدخول");
+      }
+    }
+  };
+
+  const handleResendVerification = async () => {
+    const email = getValues("email");
+    if (!email) {
+      toast.error("يرجى إدخال بريدك الإلكتروني أولاً");
+      return;
+    }
+
+    setIsResending(true);
+    try {
+      await authAPI.resendVerificationEmail({ email });
+      toast.success("تم إرسال رسالة التفعيل، تحقق من بريدك الإلكتروني");
+      setShowResendEmail(false);
+    } catch (error) {
+      toast.error(error.message || "فشل في إرسال رسالة التفعيل");
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -142,6 +174,35 @@ export default function AdminLogin() {
             {authLoading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
           </Button>
         </form>
+
+        {/* خيار إعادة إرسال رسالة التفعيل */}
+        {showResendEmail && (
+          <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <h3 className="font-semibold text-yellow-800 mb-2">
+              حسابك غير مفعل
+            </h3>
+            <p className="text-yellow-700 text-sm mb-3">
+              يبدو أن حسابك غير مفعل. هل تريد إعادة إرسال رسالة التفعيل؟
+            </p>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleResendVerification}
+                loading={isResending}
+                variant="secondary"
+                size="sm"
+              >
+                {isResending ? "جاري الإرسال..." : "إعادة الإرسال"}
+              </Button>
+              <Button
+                onClick={() => setShowResendEmail(false)}
+                variant="outline"
+                size="sm"
+              >
+                إلغاء
+              </Button>
+            </div>
+          </div>
+        )}
 
         <div className="mt-6 text-center text-sm text-purple hover:text-purple-hover hover:underline">
           <Link to="/admin/setup">إنشاء حساب جديد؟</Link>

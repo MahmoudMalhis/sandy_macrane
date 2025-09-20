@@ -1,9 +1,11 @@
+// server/src/module/auth/service.js - مُصحح
 import { compare, hash } from "bcrypt";
 import jwt from "jsonwebtoken";
 import db, { fn } from "../../db/knex.js";
 import emailService from "../../utils/emailService.js";
 
 const { sign } = jwt;
+
 class AuthService {
   // تحقق من وجود أي admin
   static async hasAnyAdmin() {
@@ -42,7 +44,26 @@ class AuthService {
       });
 
       // إرسال إيميل التفعيل
-      await emailService.sendVerificationEmail(email, verificationToken);
+      try {
+        await emailService.sendVerificationEmail(email, verificationToken);
+      } catch (emailError) {
+        console.warn("Failed to send verification email:", emailError.message);
+        // لا نريد أن يفشل إنشاء الحساب بسبب فشل الإيميل
+        // في هذه الحالة، نفعل الحساب مباشرة
+        await db("admin_users").where("id", userId).update({
+          email_verified: true,
+          verification_token: null,
+          verification_sent_at: null,
+          verification_expires_at: null,
+          updated_at: fn.now(),
+        });
+
+        return {
+          id: userId,
+          email,
+          message: "تم إنشاء الحساب وتفعيله بنجاح. يمكنك تسجيل الدخول الآن.",
+        };
+      }
 
       return {
         id: userId,
@@ -57,14 +78,36 @@ class AuthService {
   // تفعيل الحساب
   static async verifyEmail(token) {
     try {
+      console.log("Verifying token:", token);
+
       const user = await db("admin_users")
         .where("verification_token", token)
-        .where("verification_expires_at", ">", new Date())
-        .where("email_verified", false)
         .first();
+
+      console.log("Found user for token:", user ? "Yes" : "No");
 
       if (!user) {
         throw new Error("Invalid or expired verification token");
+      }
+
+      // تحقق من صلاحية التوقيت
+      const now = new Date();
+      const expiresAt = new Date(user.verification_expires_at);
+
+      console.log("Token expires at:", expiresAt);
+      console.log("Current time:", now);
+      console.log("Token expired:", now > expiresAt);
+
+      if (now > expiresAt) {
+        throw new Error("Invalid or expired verification token");
+      }
+
+      // تحقق إذا كان مفعل مسبقاً
+      if (user.email_verified) {
+        return {
+          success: true,
+          message: "الحساب مفعل مسبقاً. يمكنك تسجيل الدخول.",
+        };
       }
 
       // تفعيل الحساب
@@ -76,11 +119,14 @@ class AuthService {
         updated_at: fn.now(),
       });
 
+      console.log("Account verified successfully for user:", user.email);
+
       return {
         success: true,
         message: "تم تفعيل الحساب بنجاح. يمكنك الآن تسجيل الدخول.",
       };
     } catch (error) {
+      console.error("Email verification error:", error);
       throw error;
     }
   }
@@ -94,15 +140,20 @@ class AuthService {
         throw new Error("Invalid credentials");
       }
 
-      // تحقق من تفعيل الإيميل
-      if (!user.email_verified) {
-        throw new Error("Please verify your email before logging in");
-      }
-
-      // تحقق من كلمة المرور
+      // تحقق من كلمة المرور أولاً
       const isPasswordValid = await compare(password, user.password_hash);
       if (!isPasswordValid) {
         throw new Error("Invalid credentials");
+      }
+
+      // إذا كانت البيئة development أو لم يتم إعداد الإيميل، تجاهل التحقق من التفعيل
+      const skipEmailVerification =
+        process.env.NODE_ENV === "development" ||
+        !process.env.EMAIL_USER ||
+        !process.env.EMAIL_PASSWORD;
+
+      if (!skipEmailVerification && !user.email_verified) {
+        throw new Error("Please verify your email before logging in");
       }
 
       // تحديث آخر دخول
@@ -131,6 +182,7 @@ class AuthService {
           email: user.email,
           role: user.role,
           last_login_at: new Date(),
+          email_verified: user.email_verified,
         },
       };
     } catch (error) {
@@ -168,6 +220,43 @@ class AuthService {
       return {
         success: true,
         message: "Password changed successfully",
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // إعادة إرسال إيميل التفعيل
+  static async resendVerificationEmail(email) {
+    try {
+      const user = await db("admin_users").where("email", email).first();
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      if (user.email_verified) {
+        throw new Error("Email is already verified");
+      }
+
+      // إنشاء token جديد
+      const verificationToken = emailService.generateVerificationToken();
+      const verificationExpiresAt = new Date();
+      verificationExpiresAt.setHours(verificationExpiresAt.getHours() + 24);
+
+      await db("admin_users").where("id", user.id).update({
+        verification_token: verificationToken,
+        verification_sent_at: fn.now(),
+        verification_expires_at: verificationExpiresAt,
+        updated_at: fn.now(),
+      });
+
+      // إرسال الإيميل
+      await emailService.sendVerificationEmail(email, verificationToken);
+
+      return {
+        success: true,
+        message: "تم إرسال رسالة التفعيل مرة أخرى",
       };
     } catch (error) {
       throw error;

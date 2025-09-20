@@ -1,5 +1,7 @@
+// server/src/module/auth/controller.js - مُصحح
 import AuthService from "./service.js";
 import Logger from "../../utils/logger.js";
+import db from "../../db/knex.js";
 
 class AuthController {
   static async checkSetupStatus(req, res) {
@@ -10,6 +12,7 @@ class AuthController {
         data: { needsSetup: !hasAdmin, hasAdmin },
       });
     } catch (error) {
+      Logger.error("Check setup status failed", { error: error.message });
       res.status(500).json({
         success: false,
         message: "Server error",
@@ -58,6 +61,13 @@ class AuthController {
     try {
       const { token } = req.params;
 
+      if (!token) {
+        return res.status(400).json({
+          success: false,
+          message: "Verification token is required",
+        });
+      }
+
       const result = await AuthService.verifyEmail(token);
 
       Logger.info("Email verified successfully", {
@@ -69,18 +79,21 @@ class AuthController {
         message: result.message,
       });
     } catch (error) {
-      Logger.error("Email verification failed", { error: error.message });
+      Logger.error("Email verification failed", {
+        token: req.params.token?.substring(0, 8) + "...",
+        error: error.message,
+      });
 
       if (error.message === "Invalid or expired verification token") {
         return res.status(400).json({
           success: false,
-          message: "Invalid or expired verification token",
+          message: "رابط التفعيل غير صحيح أو منتهي الصلاحية",
         });
       }
 
       res.status(500).json({
         success: false,
-        message: "Email verification failed",
+        message: "فشل في تفعيل الحساب",
       });
     }
   }
@@ -89,9 +102,19 @@ class AuthController {
     try {
       const { email, password } = req.body;
 
+      if (!email || !password) {
+        return res.status(400).json({
+          success: false,
+          message: "Email and password are required",
+        });
+      }
+
       const result = await AuthService.login(email, password);
 
-      Logger.info("User logged in", { email });
+      Logger.info("User logged in", {
+        email,
+        emailVerified: result.user.email_verified,
+      });
 
       res.json({
         success: true,
@@ -107,35 +130,55 @@ class AuthController {
       if (error.message === "Invalid credentials") {
         return res.status(401).json({
           success: false,
-          message: "Invalid email or password",
+          message: "بيانات تسجيل الدخول غير صحيحة",
         });
       }
 
       if (error.message === "Please verify your email before logging in") {
         return res.status(401).json({
           success: false,
-          message: "Please verify your email before logging in",
+          message: "يرجى تفعيل بريدك الإلكتروني قبل تسجيل الدخول",
         });
       }
 
       res.status(500).json({
         success: false,
-        message: "Login failed",
+        message: "فشل في تسجيل الدخول",
       });
     }
   }
 
   static async getProfile(req, res) {
     try {
+      const user = await db("admin_users")
+        .select(
+          "id",
+          "email",
+          "role",
+          "email_verified",
+          "last_login_at",
+          "created_at"
+        )
+        .where("id", req.user.id)
+        .first();
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
       res.json({
         success: true,
-        data: {
-          id: req.user.id,
-          email: req.user.email,
-          role: req.user.role,
-        },
+        data: user,
       });
     } catch (error) {
+      Logger.error("Get profile failed", {
+        userId: req.user.id,
+        error: error.message,
+      });
+
       res.status(500).json({
         success: false,
         message: "Failed to get profile",
@@ -154,6 +197,13 @@ class AuthController {
         });
       }
 
+      if (newPassword.length < 8) {
+        return res.status(400).json({
+          success: false,
+          message: "كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل",
+        });
+      }
+
       await AuthService.changePassword(
         req.user.id,
         currentPassword,
@@ -167,7 +217,7 @@ class AuthController {
 
       res.json({
         success: true,
-        message: "Password changed successfully",
+        message: "تم تغيير كلمة المرور بنجاح",
       });
     } catch (error) {
       Logger.error("Change password failed", {
@@ -178,13 +228,60 @@ class AuthController {
       if (error.message === "Invalid current password") {
         return res.status(400).json({
           success: false,
-          message: "Current password is incorrect",
+          message: "كلمة المرور الحالية غير صحيحة",
         });
       }
 
       res.status(500).json({
         success: false,
-        message: "Failed to change password",
+        message: "فشل في تغيير كلمة المرور",
+      });
+    }
+  }
+
+  // إعادة إرسال إيميل التفعيل
+  static async resendVerificationEmail(req, res) {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({
+          success: false,
+          message: "Email is required",
+        });
+      }
+
+      const result = await AuthService.resendVerificationEmail(email);
+
+      Logger.info("Verification email resent", { email });
+
+      res.json({
+        success: true,
+        message: result.message,
+      });
+    } catch (error) {
+      Logger.error("Resend verification email failed", {
+        email: req.body.email,
+        error: error.message,
+      });
+
+      if (error.message === "User not found") {
+        return res.status(404).json({
+          success: false,
+          message: "البريد الإلكتروني غير مسجل",
+        });
+      }
+
+      if (error.message === "Email is already verified") {
+        return res.status(400).json({
+          success: false,
+          message: "البريد الإلكتروني مفعل مسبقاً",
+        });
+      }
+
+      res.status(500).json({
+        success: false,
+        message: "فشل في إرسال رسالة التفعيل",
       });
     }
   }
@@ -197,3 +294,4 @@ export const verifyEmail = AuthController.verifyEmail;
 export const login = AuthController.login;
 export const getProfile = AuthController.getProfile;
 export const changePassword = AuthController.changePassword;
+export const resendVerificationEmail = AuthController.resendVerificationEmail;

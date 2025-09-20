@@ -1,3 +1,4 @@
+// client/src/api/auth.js - مُصحح
 import { apiClient } from "./config";
 
 export const authAPI = {
@@ -8,6 +9,8 @@ export const authAPI = {
   checkSetupStatus: () => apiClient.get("/auth/setup-status"),
   setupFirstAdmin: (data) => apiClient.post("/auth/setup-first-admin", data),
   verifyEmail: (token) => apiClient.get(`/auth/verify-email/${token}`),
+  resendVerificationEmail: (data) =>
+    apiClient.post("/auth/resend-verification", data),
 };
 
 // src/api/admin.js

@@ -12,6 +12,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import { Toaster } from "react-hot-toast";
 import AdminSetup from "./pages/admin/Setup";
 import EmailVerification from "./pages/admin/EmailVerification";
+import AdminHomeSettings from "./pages/admin/AdminHomeSettings";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -82,6 +83,7 @@ export default function App() {
             }
           >
             <Route index element={<Dashboard />} />
+            <Route path="home" element={<AdminHomeSettings />} />
             {/* <Route path="albums" element={<AlbumsAdmin />} /> */}
             {/* <Route path="testimonials" element={<TestimonialsAdmin />} /> */}
             {/* <Route path="settings" element={<SettingsAdmin />} /> */}
