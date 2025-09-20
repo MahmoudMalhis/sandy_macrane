@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+// client/src/components/home/DualCTA.jsx - مُصحح
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Palette, Eye, ArrowLeft, Sparkles } from "lucide-react";
@@ -9,12 +10,15 @@ const DualCTA = ({ ctaData }) => {
 
   // البيانات الافتراضية
   const defaultData = {
-    customDesign: {
+    section_title: "ابدأ رحلتك معنا",
+    section_description:
+      "اختر الطريقة التي تناسبك للحصول على قطعة مكرمية أو برواز مميز",
+    custom_design: {
       title: "اطلب تصميم مخصص",
       subtitle: "حوّل أفكارك إلى قطعة فنية فريدة",
       description:
         "احصل على تصميم مكرمية أو برواز مخصص حسب ذوقك الشخصي ومساحتك",
-      buttonText: "ابدأ التصميم",
+      button_text: "ابدأ التصميم",
       icon: Palette,
       bgColor: "from-purple to-pink",
       image: "/images/custom-design.jpg",
@@ -24,14 +28,27 @@ const DualCTA = ({ ctaData }) => {
       subtitle: "استكشف مجموعتنا الكاملة",
       description:
         "تصفح جميع منتجاتنا المتاحة واختر ما يناسب ذوقك من تشكيلة واسعة",
-      buttonText: "زيارة المعرض",
+      button_text: "زيارة المعرض",
       icon: Eye,
       bgColor: "from-green to-purple",
       image: "/images/gallery-preview.jpg",
     },
   };
 
-  const data = ctaData || defaultData;
+  // دمج البيانات المرسلة مع البيانات الافتراضية
+  const data = {
+    section_title: ctaData?.section_title || defaultData.section_title,
+    section_description:
+      ctaData?.section_description || defaultData.section_description,
+    custom_design: {
+      ...defaultData.custom_design,
+      ...(ctaData?.custom_design || {}),
+    },
+    gallery: {
+      ...defaultData.gallery,
+      ...(ctaData?.gallery || {}),
+    },
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -52,6 +69,17 @@ const DualCTA = ({ ctaData }) => {
   const CTACard = ({ ctaInfo, index, isCustom }) => {
     const [isHovered, setIsHovered] = useState(false);
 
+    // التأكد من وجود جميع الخصائص المطلوبة
+    const safeCtaInfo = {
+      title: ctaInfo?.title || "عنوان القسم",
+      subtitle: ctaInfo?.subtitle || "وصف القسم",
+      description: ctaInfo?.description || "وصف تفصيلي للقسم",
+      button_text: ctaInfo?.button_text || "اضغط هنا",
+      image: ctaInfo?.image || "/images/default-cta.jpg",
+      icon: ctaInfo?.icon || Palette,
+      bgColor: ctaInfo?.bgColor || "from-purple to-pink",
+    };
+
     return (
       <motion.div
         className="relative group cursor-pointer"
@@ -65,13 +93,17 @@ const DualCTA = ({ ctaData }) => {
           {/* صورة الخلفية */}
           <div className="absolute inset-0">
             <img
-              src={ctaInfo.image}
-              alt={ctaInfo.title}
+              src={safeCtaInfo.image}
+              alt={safeCtaInfo.title}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               loading="lazy"
+              onError={(e) => {
+                // في حالة فشل تحميل الصورة، استخدم صورة افتراضية
+                e.target.src = "/images/default-cta.jpg";
+              }}
             />
             <div
-              className={`absolute inset-0 bg-gradient-to-br ${ctaInfo.bgColor} opacity-80 group-hover:opacity-90 transition-opacity duration-300`}
+              className={`absolute inset-0 bg-gradient-to-br ${safeCtaInfo.bgColor} opacity-80 group-hover:opacity-90 transition-opacity duration-300`}
             ></div>
             <div className="absolute inset-0 bg-black opacity-30 group-hover:opacity-20 transition-opacity duration-300"></div>
           </div>
@@ -87,7 +119,7 @@ const DualCTA = ({ ctaData }) => {
               transition={{ duration: 0.3 }}
             >
               <div className="bg-white bg-opacity-20 backdrop-blur-sm p-4 rounded-full">
-                <ctaInfo.icon size={48} className="text-white" />
+                <safeCtaInfo.icon size={48} className="text-white" />
               </div>
             </motion.div>
 
@@ -97,7 +129,7 @@ const DualCTA = ({ ctaData }) => {
               animate={isHovered ? { y: -5 } : { y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              {ctaInfo.title}
+              {safeCtaInfo.title}
             </motion.h3>
 
             <motion.p
@@ -105,7 +137,7 @@ const DualCTA = ({ ctaData }) => {
               animate={isHovered ? { y: -5 } : { y: 0 }}
               transition={{ duration: 0.3, delay: 0.1 }}
             >
-              {ctaInfo.subtitle}
+              {safeCtaInfo.subtitle}
             </motion.p>
 
             <motion.p
@@ -115,7 +147,7 @@ const DualCTA = ({ ctaData }) => {
               }
               transition={{ duration: 0.3, delay: 0.2 }}
             >
-              {ctaInfo.description}
+              {safeCtaInfo.description}
             </motion.p>
 
             {/* الزر */}
@@ -124,13 +156,10 @@ const DualCTA = ({ ctaData }) => {
               transition={{ duration: 0.3, delay: 0.3 }}
             >
               {isCustom ? (
-                <ApplyNow className="text-purple hover:bg-light-gray px-8 py-4 text-lg font-bold shadow-lg">
-                  <span>{ctaInfo.buttonText}</span>
-                  <ArrowLeft size={20} className="mr-2" />
-                </ApplyNow>
+                <ApplyNow />
               ) : (
                 <button className="bg-white text-purple hover:bg-light-gray px-8 py-4 rounded-full text-lg font-bold shadow-lg transition-all duration-300 flex items-center gap-3">
-                  <span>{ctaInfo.buttonText}</span>
+                  <span>{safeCtaInfo.button_text}</span>
                   <ArrowLeft size={20} />
                 </button>
               )}
@@ -171,17 +200,17 @@ const DualCTA = ({ ctaData }) => {
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-3xl lg:text-4xl font-bold text-purple mb-4">
-            ابدأ رحلتك معنا
+            {data.section_title}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            اختر الطريقة التي تناسبك للحصول على قطعة مكرمية أو برواز مميز
+            {data.section_description}
           </p>
           <div className="w-24 h-1 bg-pink mx-auto mt-6 rounded-full"></div>
         </motion.div>
 
         {/* البطاقات */}
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 max-w-6xl mx-auto">
-          <CTACard ctaInfo={data.customDesign} index={0} isCustom={true} />
+          <CTACard ctaInfo={data.custom_design} index={0} isCustom={true} />
           <CTACard ctaInfo={data.gallery} index={1} isCustom={false} />
         </div>
 

@@ -1,10 +1,8 @@
-// client/src/components/home/HeroSlider.jsx - باستخدام Swiper.js
-import React, { useRef, useEffect } from "react";
+// client/src/components/home/HeroSlider.jsx
+import { useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import ApplyNow from "../ApplyNow";
-
-// استيراد CSS الخاص بـ Swiper
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -13,31 +11,7 @@ import "swiper/css/effect-fade";
 const HeroSlider = ({ sliderData }) => {
   const swiperRef = useRef(null);
 
-  // البيانات الافتراضية
-  const defaultSlides = [
-    {
-      id: 1,
-      type: "macrame",
-      title: "مكرمية مصنوعة بحب",
-      subtitle: "تفاصيل تلامس روحك",
-      buttonText: "اطلب الآن",
-      image:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuDtAlL3Ed9PIDPJ5FdckCLxyKCIuHKC5Da9J8L39J_GIenICHBWw69hCipsmRXK974F1PivLwKqcgc9_GRLMBOkYiGy-fWVw1w1UF0jPsoptbm2Wf6y6HWyrBFTOAX3IsIaq4dmv06Fa_jdDajLpfcyhdHeHXDDYnyd_j8HRw4GdqoU0T9NBXQSumn-NCwyaev7Ndq0fmZQF5AZTYYo38aSYLaw-C3yQCNEHeqLJa4Y_-gaOgcmqRLdiBnwunUqN0wFQCDCOJGhrcqy",
-      bgGradient: "from-purple to-pink",
-    },
-    {
-      id: 2,
-      type: "frames",
-      title: "براويز مكرمية تُخلّد لحظاتك",
-      subtitle: "إبداع يدوي يحفظ ذكرياتك الجميلة",
-      buttonText: "اطلب الآن",
-      image:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuCwgunATonI6_pR5t3jCw6zlNamV0E44OusMAIy28a-MVnMn-EO94APZ5L3KqmLAS9HeJ_6jD_qC5UnXuwDTZGRl78x2zQnsBgkCY7ZpN84NwrqJB-gIpmqagqu637YCGPLPhbDSSX_FRlcYcdt0wXNMYp_7DlcnPyCSLv-de5bli6tf07iPhVTS7ryXxeQarFGR4Ky7PEPbjiex07552hSeFV8Dl9wiajiAOAE7jIAV9hvGAqgVraAJc_hPBR35YkEjkSWY0ljeKPE",
-      bgGradient: "from-green to-purple",
-    },
-  ];
-
-  const slides = sliderData || defaultSlides;
+  const slides = sliderData;
 
   // إعدادات Swiper
   const swiperConfig = {
@@ -89,7 +63,7 @@ const HeroSlider = ({ sliderData }) => {
         {...swiperConfig}
         className="h-full w-full hero-slider"
       >
-        {slides.map((slide, index) => (
+        {slides?.map((slide, index) => (
           <SwiperSlide key={slide.id} className="relative">
             {/* صورة الخلفية */}
             <div className="absolute inset-0">
@@ -108,16 +82,16 @@ const HeroSlider = ({ sliderData }) => {
             {/* المحتوى */}
             <div className="relative h-full flex items-center justify-center z-10">
               <div className="text-center text-white px-4 max-w-4xl mx-auto slide-content">
-                <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 opacity-0 transform translate-y-8">
+                <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 transform translate-y-8">
                   {slide.title}
                 </h1>
 
-                <p className="text-lg md:text-xl lg:text-2xl mb-8 opacity-90 opacity-0 transform translate-y-8">
+                <p className="text-lg md:text-xl lg:text-2xl mb-8 opacity-90 transform translate-y-8">
                   {slide.subtitle}
                 </p>
 
-                <div className="opacity-0 transform translate-y-8">
-                  <ApplyNow className="bg-white text-purple hover:bg-gray-100 text-lg px-8 py-4 shadow-lg transform hover:scale-105 transition-all duration-300" />
+                <div className="transform translate-y-8">
+                  <ApplyNow  />
                 </div>
               </div>
             </div>

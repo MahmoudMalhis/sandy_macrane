@@ -24,7 +24,7 @@ export default function AdminLayout() {
   };
 
   const menuItems = [
-    { icon: Home, label: "الرئيسية", path: "/admin" },
+    { icon: Home, label: "الرئيسية", path: "/admin/home" },
     { icon: Image, label: "الألبومات", path: "/admin/albums" },
     { icon: MessageSquare, label: "آراء العملاء", path: "/admin/testimonials" },
     { icon: Users, label: "الاستعلامات", path: "/admin/inquiries" },
@@ -32,7 +32,7 @@ export default function AdminLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 flex" dir="rtl">
+    <div className="h-screen bg-gray-100 flex" dir="rtl">
       {/* Sidebar */}
       <div
         className={`bg-white shadow-lg transition-all duration-300 ${

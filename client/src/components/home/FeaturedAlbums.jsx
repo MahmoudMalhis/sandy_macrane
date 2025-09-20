@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
+// client/src/components/home/FeaturedAlbums.jsx - محدث لاستخدام الإعدادات
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Eye, Heart, ArrowLeft } from "lucide-react";
 import Badge from "../common/Badge";
 import ApplyNow from "../ApplyNow";
 
-const FeaturedAlbums = ({ albums }) => {
+const FeaturedAlbums = ({ albums, settings }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredAlbum, setHoveredAlbum] = useState(null);
 
@@ -46,6 +47,17 @@ const FeaturedAlbums = ({ albums }) => {
     },
   ];
 
+  // الإعدادات الافتراضية
+  const defaultSettings = {
+    section_title: "منتجاتنا المميزة",
+    section_description:
+      "اكتشف أحدث إبداعاتنا من المكرمية والبراويز المصنوعة بعناية فائقة",
+    button_text: "عرض جميع المنتجات",
+    show_count: 6,
+    sort_by: "view_count",
+  };
+
+  const albumsSettings = { ...defaultSettings, ...settings };
   const displayAlbums = albums || defaultAlbums;
 
   useEffect(() => {
@@ -90,6 +102,33 @@ const FeaturedAlbums = ({ albums }) => {
     return category === "macrame" ? "مكرمية" : "برواز";
   };
 
+  // تطبيق الترتيب والعدد حسب الإعدادات
+  const getSortedAlbums = () => {
+    let sortedAlbums = [...displayAlbums];
+
+    // تطبيق الترتيب
+    switch (albumsSettings.sort_by) {
+      case "view_count":
+        sortedAlbums.sort((a, b) => (b.view_count || 0) - (a.view_count || 0));
+        break;
+      case "created_at":
+        sortedAlbums.sort(
+          (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)
+        );
+        break;
+      case "random":
+        sortedAlbums = sortedAlbums.sort(() => Math.random() - 0.5);
+        break;
+      default:
+        break;
+    }
+
+    // تطبيق العدد المحدد
+    return sortedAlbums.slice(0, albumsSettings.show_count);
+  };
+
+  const sortedAlbums = getSortedAlbums();
+
   return (
     <section id="featured-albums" className="py-16 lg:py-24 bg-beige">
       <div className="container mx-auto px-4">
@@ -101,17 +140,17 @@ const FeaturedAlbums = ({ albums }) => {
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-3xl lg:text-4xl font-bold text-purple mb-4">
-            منتجاتنا المميزة
+            {albumsSettings.section_title}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            اكتشف أحدث إبداعاتنا من المكرمية والبراويز المصنوعة بعناية فائقة
+            {albumsSettings.section_description}
           </p>
           <div className="w-24 h-1 bg-pink mx-auto mt-6 rounded-full"></div>
         </motion.div>
 
         {/* شبكة الألبومات */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {displayAlbums.map((album, index) => (
+          {sortedAlbums.map((album, index) => (
             <motion.div
               key={album.id}
               className="group relative"
@@ -217,7 +256,7 @@ const FeaturedAlbums = ({ albums }) => {
           transition={{ duration: 0.8, delay: 0.8 }}
         >
           <button className="bg-purple text-white px-8 py-4 rounded-full hover:bg-purple-hover transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-3 mx-auto">
-            <span className="font-bold">عرض جميع المنتجات</span>
+            <span className="font-bold">{albumsSettings.button_text}</span>
             <ArrowLeft size={20} />
           </button>
         </motion.div>

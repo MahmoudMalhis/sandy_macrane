@@ -1,4 +1,4 @@
-// server/src/utils/logger.js
+// server/src/utils/logger.js - مُصحح
 import { existsSync, mkdirSync, appendFile } from "fs";
 import { join } from "path";
 import { fileURLToPath } from "url";
@@ -44,25 +44,28 @@ class Logger {
     });
   }
 
-  static info(message, meta) {
+  static info(message, meta = {}) {
     this.log("info", message, meta);
   }
 
-  static warn(message, meta) {
+  static warn(message, meta = {}) {
     this.log("warn", message, meta);
   }
 
-  static error(message, meta) {
+  static error(message, meta = {}) {
     this.log("error", message, meta);
   }
 
-  static debug(message, meta) {
+  static debug(message, meta = {}) {
     if (process.env.NODE_ENV === "development") {
       this.log("debug", message, meta);
     }
   }
 }
 
-// Named exports بدلاً من default
-export const { info, warn, error, debug } = Logger;
+// Named exports
+export const info = Logger.info.bind(Logger);
+export const warn = Logger.warn.bind(Logger);
+export const error = Logger.error.bind(Logger);
+export const debug = Logger.debug.bind(Logger);
 export default Logger;

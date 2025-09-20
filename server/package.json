@@ -8,7 +8,6 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "migrate": "knex migrate:latest --knexfile ./knexfile.js",
-    "seed": "knex seed:run --knexfile ./knexfile.js",
     "rollback": "knex migrate:rollback --knexfile ./knexfile.js",
     "make:migration": "knex migrate:make --knexfile ./knexfile.js",
     "make:seed": "knex seed:make --knexfile ./knexfile.js"

@@ -1,7 +1,8 @@
-// client/src/components/home/TestimonialsSlider.jsx - باستخدام Swiper.js
-import React, { useState, useEffect } from "react";
+/* eslint-disable no-unused-vars */
+// client/src/components/home/TestimonialsSlider.jsx - محدث لاستخدام الإعدادات
+import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay, EffectCards } from "swiper/modules";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { motion } from "framer-motion";
 import { Star, Quote, ArrowLeft } from "lucide-react";
 
@@ -9,9 +10,8 @@ import { Star, Quote, ArrowLeft } from "lucide-react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import "swiper/css/effect-cards";
 
-const TestimonialsSlider = ({ testimonials }) => {
+const TestimonialsSlider = ({ testimonials, settings }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   // بيانات افتراضية
@@ -54,6 +54,19 @@ const TestimonialsSlider = ({ testimonials }) => {
     },
   ];
 
+  // الإعدادات الافتراضية
+  const defaultSettings = {
+    section_title: "ماذا يقول عملاؤنا",
+    section_description:
+      "آراء حقيقية من عملائنا الكرام حول تجربتهم مع منتجاتنا",
+    button_text: "شاهد جميع التقييمات",
+    show_count: 4,
+    min_rating: 4,
+    autoplay: true,
+    autoplay_delay: 6000,
+  };
+
+  const testimonialsSettings = { ...defaultSettings, ...settings };
   const displayTestimonials = testimonials || defaultTestimonials;
 
   useEffect(() => {
@@ -93,17 +106,35 @@ const TestimonialsSlider = ({ testimonials }) => {
     });
   };
 
+  // تصفية التقييمات حسب الإعدادات
+  const getFilteredTestimonials = () => {
+    let filtered = displayTestimonials.filter(
+      (testimonial) => testimonial.rating >= testimonialsSettings.min_rating
+    );
+
+    // تطبيق العدد المحدد
+    return filtered.slice(0, testimonialsSettings.show_count);
+  };
+
+  const filteredTestimonials = getFilteredTestimonials();
+
   // إعدادات Swiper
   const swiperConfig = {
-    modules: [Navigation, Pagination, Autoplay],
+    modules: [
+      Navigation,
+      Pagination,
+      ...(testimonialsSettings.autoplay ? [Autoplay] : []),
+    ],
     spaceBetween: 30,
     slidesPerView: 1,
-    loop: true,
-    autoplay: {
-      delay: 6000,
-      disableOnInteraction: false,
-      pauseOnMouseEnter: true,
-    },
+    loop: filteredTestimonials.length > 1,
+    ...(testimonialsSettings.autoplay && {
+      autoplay: {
+        delay: testimonialsSettings.autoplay_delay,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      },
+    }),
     navigation: {
       nextEl: ".testimonials-swiper-button-next",
       prevEl: ".testimonials-swiper-button-prev",
@@ -135,10 +166,10 @@ const TestimonialsSlider = ({ testimonials }) => {
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-3xl lg:text-4xl font-bold text-purple mb-4">
-            ماذا يقول عملاؤنا
+            {testimonialsSettings.section_title}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            آراء حقيقية من عملائنا الكرام حول تجربتهم مع منتجاتنا
+            {testimonialsSettings.section_description}
           </p>
           <div className="w-24 h-1 bg-pink mx-auto mt-6 rounded-full"></div>
         </motion.div>
@@ -146,7 +177,7 @@ const TestimonialsSlider = ({ testimonials }) => {
         {/* السلايدر */}
         <div className="relative max-w-4xl mx-auto">
           <Swiper {...swiperConfig} className="testimonials-slider rounded-2xl">
-            {displayTestimonials.map((testimonial) => (
+            {filteredTestimonials.map((testimonial) => (
               <SwiperSlide key={testimonial.id}>
                 <div className="bg-beige rounded-2xl p-8 lg:p-12 mx-4">
                   <div className="grid lg:grid-cols-3 gap-8 items-center">
@@ -209,34 +240,40 @@ const TestimonialsSlider = ({ testimonials }) => {
             ))}
 
             {/* أزرار التنقل المخصصة */}
-            <div className="testimonials-swiper-button-prev absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white hover:bg-purple hover:text-white text-purple p-3 rounded-full shadow-lg transition-all duration-300 cursor-pointer">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <polyline points="15,18 9,12 15,6"></polyline>
-              </svg>
-            </div>
+            {filteredTestimonials.length > 1 && (
+              <>
+                <div className="testimonials-swiper-button-prev absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white hover:bg-purple hover:text-white text-purple p-3 rounded-full shadow-lg transition-all duration-300 cursor-pointer">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <polyline points="15,18 9,12 15,6"></polyline>
+                  </svg>
+                </div>
 
-            <div className="testimonials-swiper-button-next absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white hover:bg-purple hover:text-white text-purple p-3 rounded-full shadow-lg transition-all duration-300 cursor-pointer">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <polyline points="9,18 15,12 9,6"></polyline>
-              </svg>
-            </div>
+                <div className="testimonials-swiper-button-next absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white hover:bg-purple hover:text-white text-purple p-3 rounded-full shadow-lg transition-all duration-300 cursor-pointer">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <polyline points="9,18 15,12 9,6"></polyline>
+                  </svg>
+                </div>
+              </>
+            )}
 
             {/* مؤشرات النقاط المخصصة */}
-            <div className="testimonials-swiper-pagination mt-8 flex justify-center"></div>
+            {filteredTestimonials.length > 1 && (
+              <div className="testimonials-swiper-pagination mt-8 flex justify-center"></div>
+            )}
           </Swiper>
         </div>
 
@@ -248,7 +285,9 @@ const TestimonialsSlider = ({ testimonials }) => {
           transition={{ duration: 0.8, delay: 0.5 }}
         >
           <button className="bg-purple text-white px-8 py-4 rounded-full hover:bg-purple-hover transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-3 mx-auto">
-            <span className="font-bold">شاهد جميع التقييمات</span>
+            <span className="font-bold">
+              {testimonialsSettings.button_text}
+            </span>
             <ArrowLeft size={20} />
           </button>
         </motion.div>
